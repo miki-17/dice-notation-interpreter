@@ -27,9 +27,9 @@ class Parser():
         self.x = Lark(grammar, start="statement")
 
     def parse(self, statement):
-        print(self.x.parse(statement).pretty())
-        st_lexed = self.lexer(statement)
-        return st_lexed
+        parsed = self.x.parse(statement)
+        print(parsed.pretty())
+        return parsed
 
     def lexer(self, statement):
         pass
