@@ -8,21 +8,28 @@ from lark import Lark
 class Parser():
     def __init__(self):
         grammar = """
-            statement: modifier_back? n_rolls dice n_faces modifier_front?
+            statement: sint
 
             modifier_front: add_front | sub_front 
             modifier_back: add_back | sub_back
+
+            dice_throw_sub: "-" n_rolls "d" n_faces
+            dice_throw_add: "+" n_rolls "d" n_faces
 
             add_front: "+" SIGNED_NUMBER
             add_back: SIGNED_NUMBER "+"
             sub_front: "-" SIGNED_NUMBER
             sub_back: SIGNED_NUMBER "-"
 
-            n_rolls: SIGNED_NUMBER?
-            dice: "d"
-            n_faces: SIGNED_NUMBER
+            sint: ["+"|"-"]
+            modifier: SIGNED_NUMBER
+
+
+            n_rolls: INT?
+            n_faces: INT
 
             %import common.WS
+            %import common.INT
             %import common.SIGNED_NUMBER
             %ignore WS
         """
