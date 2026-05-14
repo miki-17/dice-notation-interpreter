@@ -8,7 +8,7 @@ from lark import Lark
 class Parser():
     def __init__(self):
         grammar = """
-            statement: sint
+            statement: modifier* (dice_throw_sub|dice_throw_add)+ modifier*
 
             modifier_front: add_front | sub_front 
             modifier_back: add_back | sub_back
