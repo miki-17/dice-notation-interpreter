@@ -33,7 +33,7 @@ class Parser():
             closing_bracket: /\\)/
             math_num: SIGNED_NUMBER
 
-            modifier: (minus? mod_num) | sin | cos
+            modifier: (minus? mod_num) | sin | cos | tan | cot
 
             operator: /(\\*\\*)|[-+*\\/%]/
 
