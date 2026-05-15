@@ -1,28 +1,14 @@
 import random
 import lark
+from dice_throw_interpreter import DiceThrowInterpreter
 
 class Interpreter():
     def __init__(self):
         self.operations = []
-
-    def die_roll(self, die_faces):
-        return random.randint(1, die_faces)
     
     def interpret_dice_throw(self, data: lark.Tree):
-        n_rolls_tree = list(data.find_data("n_rolls"))
-        n_faces_tree = list(data.find_data("n_faces"))
-        try:
-            n_rolls = int(n_rolls_tree[0].children[0].value)
-        except:
-            n_rolls = 1
-        n_faces = int(n_faces_tree[0].children[0].value)
-
-        rolls = []
-        for _ in range(n_rolls):
-            rolls.append(self.die_roll(die_faces=n_faces))
-        
-        return rolls, sum(rolls)
-
+        interpreter = DiceThrowInterpreter(data)
+        return interpreter.roll()
 
     def interpret_modifier(self, data: lark.Tree):
         number = eval(list(data.find_data("mod_num"))[0].children[0].value)
@@ -96,20 +82,21 @@ class Interpreter():
         self.reset_operation_stack()
 
         all_rolls = []
-        all_roll_sums = []
         saved_operator = "+"
 
         for node in parsed_data.children:
             if node.data == "dice_throw":
-                rolls, roll_sum = self.interpret_dice_throw(node)
+                rolls = self.interpret_dice_throw(node)
                 all_rolls.append(rolls)
-                all_roll_sums.append(roll_sum)
                 self.operations.append((saved_operator, rolls))
             elif node.data == "function":
                 operator, number = self.interpret_function(node)
                 self.operations.append((operator, number))
             elif node.data == "operator":
                 saved_operator = self.interpret_operator(node)
+            elif node.data == "modifier":
+                number = self.interpret_modifier(node)
+                self.operations.append(("+", number))
         
         result, operations_string = self.evaluate()
         print(operations_string, "=", result)
