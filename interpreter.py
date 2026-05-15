@@ -89,8 +89,9 @@ class Interpreter():
             if node.data == "operator":
                 operator = self.interpret_operator(node)
                 result_string += " " + operator + " "
-                eval_string += " " + operator + " "
-        return result_string, eval_string
+                operations_list.append(operator)
+        
+        return result_string, self.evaluate_operations(operations_list)
     
     def interpret(self, parsed_data: lark.Tree):
         result_string, result = self.interpret_statement(parsed_data)
