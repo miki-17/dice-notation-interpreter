@@ -3,8 +3,9 @@ from lark import Lark
 class Parser():
     def __init__(self):
         grammar = """
-            statement: (modifier (function)* operator)? dice_throw ((operator dice_throw)|function)*
-            dice_throw: n_rolls "d" n_faces (explode | extreme | reroll | unique | keep | drop | compare_success | compare_failure | crit | sort)*
+            statement: value ((operator value)|function)*
+            value: modifier | dice_throw | opening_bracket statement closing_bracket
+            dice_throw: n_rolls "d" n_faces (explode | extreme | reroll | unique | keep | drop | crit | sort)* (compare_succ_fail)?
             
             minus: /-/
             percent: /%/
@@ -20,8 +21,7 @@ class Parser():
             drop_type: /d[hl]?/
             drop_num: INT
             extreme: (/min/|/max/) extreme_val
-            compare_success: compare
-            compare_failure: /f/ compare
+            compare_succ_fail: compare (/f/ compare)?
             compare: compare_symbol compare_number
             compare_symbol: (/[<>][=]?/|/=/|/<>/|/!=/)
             compare_number: SIGNED_NUMBER
@@ -29,6 +29,8 @@ class Parser():
             crit: crit_type compare?
             crit_type: /c[sf]/
             sort: /s[ad]?/
+            opening_bracket: /\\(/
+            closing_bracket: /\\)/
 
             modifier: minus? mod_num
             function: operator modifier
