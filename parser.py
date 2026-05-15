@@ -12,7 +12,7 @@ class Parser():
                 | keep 
                 | drop 
                 | crit 
-                | sort)* (compare_succ_fail)?
+                | sort)*
             
             minus: /-/
             percent: /%/
