@@ -3,7 +3,7 @@ from lark import Lark
 class Parser():
     def __init__(self):
         grammar = """
-            statement: value ((operator value)|function)*
+            statement: value (operator value)*
             value: modifier | dice_throw | opening_bracket statement closing_bracket
             dice_throw: n_rolls "d" n_faces (explode | extreme | reroll | unique | keep | drop | crit | sort)* (compare_succ_fail)?
             
@@ -31,11 +31,16 @@ class Parser():
             sort: /s[ad]?/
             opening_bracket: /\\(/
             closing_bracket: /\\)/
+            math_num: SIGNED_NUMBER
 
-            modifier: minus? mod_num
-            function: operator modifier
+            modifier: (minus? mod_num) | sin | cos | tan | cot
 
             operator: /(\\*\\*)|[-+*\\/%]/
+
+            sin: /sin\\(/ math_num /\\)/
+            cos: /cos\\(/ math_num /\\)/
+            tan: /tan\\(/ math_num /\\)/
+            cot: /cot\\(/ math_num /\\)/
 
             extreme_val: INT
             n_rolls: INT?
