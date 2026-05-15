@@ -5,7 +5,14 @@ class Parser():
         grammar = """
             statement: value (operator value)*
             value: modifier | dice_throw | opening_bracket statement closing_bracket
-            dice_throw: n_rolls "d" n_faces (explode | extreme | reroll | unique | keep | drop | crit | sort)* (compare_succ_fail)?
+            dice_throw: n_rolls "d" n_faces (explode 
+                | extreme 
+                | reroll 
+                | unique 
+                | keep 
+                | drop 
+                | crit 
+                | sort)* (compare_succ_fail)?
             
             minus: /-/
             percent: /%/
@@ -33,7 +40,11 @@ class Parser():
             closing_bracket: /\\)/
             math_num: SIGNED_NUMBER
 
-            modifier: (minus? mod_num) | sin | cos | tan | cot
+            modifier: (minus? mod_num) 
+                | sin 
+                | cos 
+                | tan 
+                | cot
 
             operator: /(\\*\\*)|[-+*\\/%]/
 
@@ -44,7 +55,9 @@ class Parser():
 
             extreme_val: INT
             n_rolls: INT?
-            n_faces: INT|percent|fudge
+            n_faces: INT
+                | percent
+                | fudge
 
             %import common.WS
             %import common.INT
@@ -52,13 +65,11 @@ class Parser():
             %import common.NUMBER
             %ignore WS
         """
-        self.x = Lark(grammar, start="statement")
+        self.lexer = Lark(grammar, start="statement")
 
     def parse(self, statement):
-        parsed = self.x.parse(statement)
-        print(parsed)
-        print(parsed.pretty())
+        parsed = self.lexer.parse(statement)
         return parsed
 
-    def lexer(self, statement):
-        pass
+    # def lexer(self, statement):
+    #     pass
