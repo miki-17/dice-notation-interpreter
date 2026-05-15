@@ -78,25 +78,73 @@ class Interpreter():
         result = self.operations[0][1]
         return result, operations_string
     
+    def interpret_value(self, data: lark.Tree):
+        opening_brackets = bool(list(data.find_data("opening_bracket")))
+        closing_brackets = bool(list(data.find_data("closing_bracket")))
+        modifier_node = list(data.find_data("modifier"))
+        dice_throw_node = list(data.find_data("dice_throw"))
+        statement = list(data.find_data("statement"))
+        result_string = ""
+        eval_string = ""
+
+        if opening_brackets and closing_brackets:
+            result_string += "("
+            eval_string += "("
+            res_string, ev_string = self.interpret_statement(statement[0])
+            result_string += res_string
+            eval_string += ev_string
+            result_string += ")"
+            eval_string += ")"
+        elif modifier_node:
+            modifier_node = modifier_node[0]
+            number = self.interpret_modifier(modifier_node)
+            result_string += str(number)
+            eval_string += str(number)
+        elif dice_throw_node:
+            dice_throw_node = dice_throw_node[0]
+            rolls = self.interpret_dice_throw(dice_throw_node)
+            result_string += str(rolls)
+            eval_string += str(sum(rolls))
+        
+        return result_string, eval_string
+        
+    def interpret_statement(self, data: lark.Tree):
+        result_string = ""
+        eval_string = ""
+        for node in data.children:
+            if node.data == "value":
+                res_string, ev_string = self.interpret_value(node)
+                result_string += res_string
+                eval_string += ev_string
+            if node.data == "operator":
+                operator = self.interpret_operator(node)
+                print(operator)
+                result_string += " " + operator + " "
+                eval_string += " " + operator + " "
+        return result_string, eval_string
+    
     def interpret(self, parsed_data: lark.Tree):
         self.reset_operation_stack()
 
         all_rolls = []
         saved_operator = "+"
 
-        for node in parsed_data.children:
-            if node.data == "dice_throw":
-                rolls = self.interpret_dice_throw(node)
-                all_rolls.append(rolls)
-                self.operations.append((saved_operator, rolls))
-            elif node.data == "function":
-                operator, number = self.interpret_function(node)
-                self.operations.append((operator, number))
-            elif node.data == "operator":
-                saved_operator = self.interpret_operator(node)
-            elif node.data == "modifier":
-                number = self.interpret_modifier(node)
-                self.operations.append(("+", number))
+        result_string, eval_string = self.interpret_statement(parsed_data)
+        print(result_string, "=", eval(eval_string))
+
+        # for node in parsed_data.children:
+        #     if node.data == "dice_throw":
+        #         rolls = self.interpret_dice_throw(node)
+        #         all_rolls.append(rolls)
+        #         self.operations.append((saved_operator, rolls))
+        #     elif node.data == "function":
+        #         operator, number = self.interpret_function(node)
+        #         self.operations.append((operator, number))
+        #     elif node.data == "operator":
+        #         saved_operator = self.interpret_operator(node)
+        #     elif node.data == "modifier":
+        #         number = self.interpret_modifier(node)
+        #         self.operations.append(("+", number))
         
-        result, operations_string = self.evaluate()
-        print(operations_string, "=", result)
+        #result, operations_string = self.evaluate()
+        #print(operations_string, "=", result)
