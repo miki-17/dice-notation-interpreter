@@ -48,10 +48,10 @@ class Parser():
 
             operator: /(\\*\\*)|[-+*\\/%]/
 
-            sin: /sin\\(/ math_num /\\)/
-            cos: /cos\\(/ math_num /\\)/
-            tan: /tan\\(/ math_num /\\)/
-            cot: /cot\\(/ math_num /\\)/
+            sin: /sin\\(/ value /\\)/
+            cos: /cos\\(/ value /\\)/
+            tan: /tan\\(/ value /\\)/
+            cot: /cot\\(/ value /\\)/
 
             extreme_val: INT
             n_rolls: INT?
