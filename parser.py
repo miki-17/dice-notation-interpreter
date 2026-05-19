@@ -15,9 +15,9 @@ class Parser():
                 | sort)*
             
             minus: /-/
-            percent: /%/
+            percent: "%"
             explode: /!/ penetrating? compare?
-            fudge: /F/
+            fudge: "F"
             penetrating: /p/
             reroll: /ro?/ compare?
             unique: /uo?/ compare?
@@ -48,10 +48,10 @@ class Parser():
 
             operator: /(\\*\\*)|[-+*\\/%]/
 
-            sin: /sin\\(/ value /\\)/
-            cos: /cos\\(/ value /\\)/
-            tan: /tan\\(/ value /\\)/
-            cot: /cot\\(/ value /\\)/
+            sin: /sin\\(/ statement /\\)/
+            cos: /cos\\(/ statement /\\)/
+            tan: /tan\\(/ statement /\\)/
+            cot: /cot\\(/ statement /\\)/
 
             extreme_val: INT
             n_rolls: INT?

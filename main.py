@@ -2,6 +2,17 @@ from parser import Parser
 from interpreter import Interpreter
 from lark.exceptions import UnexpectedToken, UnexpectedCharacters, UnexpectedEOF
 
+def translate_tokens(tokens):
+    tokens_translated = []
+    for token in tokens:
+        if token.startswith("__ANON_"):
+            tokens_translated.append("Special character / Modifier")
+        else:
+            tokens_translated.append(token)
+    return list(set(tokens_translated))
+
+
+
 def main():
     parser = Parser()
     interpreter = Interpreter()
@@ -19,12 +30,14 @@ def main():
             parsed_data = parser.parse(statement)
             interpreter.interpret(parsed_data)
         except UnexpectedToken as e:
-            print(f"ERROR: Unexpected token '{e.token.value}', line {e.line}, column {e.column}")
-            print(f"Expected tokens: {", ".join(e.expected)}")
+            tokens = translate_tokens(e.expected)
+            print(f"ERROR: Unexpected token '{e.token.value}' at column {e.column}")
+            print(f"Expected tokens:\n {", ".join(tokens)}")
         except UnexpectedEOF as e:
-            print(f"ERROR: Input ended, but parser still expected tokens: {", ".join(e.expected)}")
+            tokens = translate_tokens(e.expected)
+            print(f"ERROR: Input ended, but parser still expected tokens:\n {", ".join(tokens)}")
         except UnexpectedCharacters as e:
-            print(f"ERROR: Illegal character '{e.char}' at line {e.line}, column {e.column}")
+            print(f"ERROR: Illegal character '{e.char}' at column {e.column}")
         except ZeroDivisionError:
             print("ERROR: Trying to divide by zero")
         except Exception as e:
